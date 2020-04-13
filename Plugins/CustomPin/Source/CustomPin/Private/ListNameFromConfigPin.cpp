@@ -16,18 +16,19 @@ TSharedRef<SWidget> SListNameFromConfigPin::GetDefaultValueWidget()
 {
     UCustomConfig::GetNames(AttributesList);
 
+    // retrieve the previous value selected (or the first value as default)
     TSharedPtr<FName> InitialSelectedName = GetSelectedName();
     if (InitialSelectedName.IsValid())
     {
         SetPropertyWithName(*InitialSelectedName.Get());
     }
 
-    return SAssignNew(NameComboBox, SNameComboBox)    // note you can display any widget here
-        .ContentPadding(FMargin(6.0f, 2.0f))
-        .OptionsSource(&AttributesList)
-        .InitiallySelectedItem(InitialSelectedName)
-        .OnComboBoxOpening(this, &SListNameFromConfigPin::OnComboBoxOpening)
-        .OnSelectionChanged(this, &SListNameFromConfigPin::OnAttributeSelected);
+    return SAssignNew(NameComboBox, SNameComboBox)     // you can display any widget here
+        .ContentPadding(FMargin(6.0f, 2.0f))           // you can stylize how you want by the way, check Slate library
+        .OptionsSource(&AttributesList)                // this to create all possibilities
+        .InitiallySelectedItem(InitialSelectedName)    // the default or previous selected value
+        .OnComboBoxOpening(this, &SListNameFromConfigPin::OnComboBoxOpening)        // this event is defined by the SNameComboBox
+        .OnSelectionChanged(this, &SListNameFromConfigPin::OnAttributeSelected);    // dito
 }
 void SListNameFromConfigPin::OnAttributeSelected(TSharedPtr<FName> ItemSelected, ESelectInfo::Type SelectInfo)
 {
@@ -54,6 +55,7 @@ void SListNameFromConfigPin::SetPropertyWithName(const FName& Name)
 
     // To set the property we need to use a FString
     // using this format: (MyPropertyName="My Value")
+    // MyPropertyName is the property defined in our struct FCustomAttribute
     FString PinString = TEXT("(MyName=\"");
     PinString += *Name.ToString();
     PinString += TEXT("\")");
@@ -70,6 +72,9 @@ void SListNameFromConfigPin::SetPropertyWithName(const FName& Name)
 
         if (PinString != GraphPinObj->GetDefaultAsString())
         {
+            // Its important to use this function instead of GraphPinObj->DefaultValue
+            // directly, cause it notifies the node from the pin is attached to.
+            // So the node can listen this change and do things internally.
             GraphPinObj->GetSchema()->TrySetDefaultValue(*GraphPinObj, PinString);
         }
     }
@@ -93,7 +98,7 @@ TSharedPtr<FName> SListNameFromConfigPin::GetSelectedName() const
             return AttributesList[NameIndex];
         }
     }
-
+    // no value has been found, return a default value
     return AttributesList[0];
 }
 

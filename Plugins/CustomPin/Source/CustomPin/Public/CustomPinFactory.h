@@ -14,7 +14,7 @@ class FCustomPinFactory : public FGraphPanelPinFactory
     {
         const UEdGraphSchema_K2* K2Schema = GetDefault<UEdGraphSchema_K2>();
         /*
-         * Check if pin is struct, and then check if that pin is of struct type we want customize
+         * Check if pin is struct, and then check if that pin is of struct type we want to customize
          */
         if (InPin->PinType.PinCategory == K2Schema->PC_Struct &&
             InPin->PinType.PinSubCategoryObject == FCustomAttribute::StaticStruct())

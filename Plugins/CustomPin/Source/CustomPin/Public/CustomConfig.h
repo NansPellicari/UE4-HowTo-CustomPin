@@ -15,6 +15,10 @@ class UCustomConfig : public UDeveloperSettings
     GENERATED_BODY()
 
 public:
+    /**
+     * This function is allow to convert each setting name to
+     * TSharedPtr which our Pin object can works on.
+     */
     static void GetNames(TArray<TSharedPtr<FName>>& ShareableNames)
     {
         static const UCustomConfig* StaticObject = GetDefault<UCustomConfig>();
