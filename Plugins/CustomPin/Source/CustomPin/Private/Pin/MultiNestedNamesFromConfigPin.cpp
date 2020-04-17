@@ -25,7 +25,7 @@ TSharedRef<SWidget> SMultiNestedNamesFromConfigPin::GetDefaultValueWidget()
     }
 
     TSharedPtr<FName> InitialSelectedName;
-    // retrieve the previous value selected (or the first value as default)
+    // retrieve previous values selected (or the first value as default)
     TSharedPtr<FName> InitialSelectedCategory = GetSelectedCategory();
     if (InitialSelectedCategory.IsValid())
     {
@@ -36,8 +36,6 @@ TSharedRef<SWidget> SMultiNestedNamesFromConfigPin::GetDefaultValueWidget()
 
     // clang-format off
     SAssignNew(ParentWidget, SVerticalBox)
-    
-        // Top-Aligned Fixed Size
         +SVerticalBox::Slot()
         .AutoHeight()
         [
@@ -76,7 +74,6 @@ void SMultiNestedNamesFromConfigPin::BuildCheckbox()
             bIsChecked = true;
         }
 
-        UE_LOG(LogTemp, Warning, TEXT("Is in? %i"), bIsChecked);
         TPair<TSharedPtr<SCheckBox>, TSharedPtr<STextBlock>> Checkbox;
         // clang-format off
         CheckboxWidget->AddSlot()
@@ -97,7 +94,9 @@ void SMultiNestedNamesFromConfigPin::BuildCheckbox()
 void SMultiNestedNamesFromConfigPin::OnCheckboxChanged(ECheckBoxState State)
 {
     ChoosenNames.Empty();
-    UE_LOG(LogTemp, Display, TEXT("Refresh---"));
+
+    // Check each checkboxes to see and if checks,
+    // saved it in ChoosenNames.
     for (auto Pair : Checkboxes)
     {
         TSharedPtr<SCheckBox> Checkbox = Pair.Key;
@@ -115,13 +114,15 @@ void SMultiNestedNamesFromConfigPin::OnCheckboxChanged(ECheckBoxState State)
         }
     }
     UE_LOG(LogTemp, Warning, TEXT("Cat selected: %s"), *ConfigComboBox->GetSelectedItem()->ToString());
+    // Save new data
     SetPropertyWithName(*ConfigComboBox->GetSelectedItem().Get());
 }
 void SMultiNestedNamesFromConfigPin::OnCategorySelected(TSharedPtr<FName> ItemSelected, ESelectInfo::Type SelectInfo)
 {
     if (ItemSelected.IsValid())
     {
-        UE_LOG(LogTemp, Warning, TEXT("%s: check if not the same as previous value"), ANSI_TO_TCHAR(__FUNCTION__));
+        // Checkboxes are fully rebuilt when a category changed
+        ChoosenNames.Empty();
         UpdateNames(*ItemSelected);
         RetrievePropertyAsNames();
         BuildCheckbox();
@@ -146,19 +147,22 @@ void SMultiNestedNamesFromConfigPin::SetPropertyWithName(const FName& Category)
     check(GraphPinObj);
     check(GraphPinObj->PinType.PinSubCategoryObject == FMultiNestedNamesAttribute::StaticStruct());
     FString NamesValue;
+
+    // Build understandable values for OurStruct > TArray blueprint property
     for (auto Name : ChoosenNames)
     {
         NamesValue.Append("\"").Append(Name->ToString()).Append("\",");
     }
     // To remove the last comma
     NamesValue = NamesValue.LeftChop(1);
+    // This format allows to save TArray values: MySubNames=("value1","value2")
     FString PinString = FString::Format(TEXT("(MyName=\"{0}\",MySubNames=({1}))"), {Category.ToString(), NamesValue});
     FString CurrentDefaultValue = GraphPinObj->GetDefaultAsString();
 
     if (CurrentDefaultValue != PinString)
     {
         const FScopedTransaction Transaction(
-            NSLOCTEXT("GraphEditor", "ChangeNestedNamesFromConfigPinValue", "Change Nested Names From Config Value"));
+            NSLOCTEXT("GraphEditor", "ChangeMultiNestedNamesFromConfigPinValue", "Change Multi Nested Names From Config Value"));
         GraphPinObj->Modify();
 
         UE_LOG(LogTemp, Warning, TEXT("Verify values old: \"%s\" chosen: \"%s\""), *CurrentDefaultValue, *PinString);
@@ -238,29 +242,27 @@ void SMultiNestedNamesFromConfigPin::RetrievePropertyAsNames()
     check(GraphPinObj);
     check(GraphPinObj->PinType.PinSubCategoryObject == FMultiNestedNamesAttribute::StaticStruct());
 
-    UE_LOG(LogTemp, Display, TEXT("----- %s"), ANSI_TO_TCHAR(__FUNCTION__));
     FString PinString = GraphPinObj->GetDefaultAsString();
-    UE_LOG(LogTemp, Display, TEXT("> Value %s"), *PinString);
 
     if (PinString.StartsWith(TEXT("(")) && PinString.EndsWith(TEXT(")")))
     {
         PinString = PinString.LeftChop(1);
         PinString = PinString.RightChop(1);
         FString ResultString;
+        // This retrieves the 'MySubnames="..." ' property in saved string
         PinString.Split(TEXT("\","), NULL, &ResultString);
-        UE_LOG(LogTemp, Warning, TEXT("Value: %s"), *ResultString);
         ResultString.TrimStartAndEnd().Split(TEXT("="), NULL, &PinString);
         PinString = PinString.TrimQuotes();
-        UE_LOG(LogTemp, Warning, TEXT("Value2: %s"), *PinString);
         PinString = PinString.LeftChop(1);
         PinString = PinString.RightChop(1);
+
+        // Check each subnames in the ResultString
         while (PinString.Split(TEXT(","), &ResultString, &PinString))
         {
             ChoosenNames.Add(MakeShareable<FName>(new FName(*ResultString.TrimQuotes())));
         }
 
         ChoosenNames.Add(MakeShareable<FName>(new FName(*PinString.TrimQuotes())));
-        UE_LOG(LogTemp, Warning, TEXT("length %d"), ChoosenNames.Num());
     }
 }
 

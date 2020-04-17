@@ -24,7 +24,7 @@ TSharedRef<SWidget> SNestedNamesFromConfigPin::GetDefaultValueWidget()
     }
 
     TSharedPtr<FName> InitialSelectedName;
-    // retrieve the previous value selected (or the first value as default)
+    // retrieve previous values selected (or first values from arrays as default)
     TSharedPtr<FName> InitialSelectedCategory = GetSelectedName(true);
     if (InitialSelectedCategory.IsValid())
     {
@@ -37,17 +37,17 @@ TSharedRef<SWidget> SNestedNamesFromConfigPin::GetDefaultValueWidget()
     }
 
     // clang-format off
+    // You can really do what you want here, this is really powerfull!
     return SNew(SVerticalBox)
-            // Top-Aligned Fixed Size
             +SVerticalBox::Slot()
             .AutoHeight()
             [
-                SAssignNew(ConfigComboBox, SNameComboBox)    // you can display any widget here
-                .ContentPadding(FMargin(6.0f, 2.0f))       // you can stylize how you want by the way, check Slate library
-                .OptionsSource(&Categories)    // this to create all possibilities
-                .InitiallySelectedItem(InitialSelectedCategory)    // the default or previous selected value
-                .OnComboBoxOpening(this, &SNestedNamesFromConfigPin::OnCategoryComboBoxOpening)    // this event is defined by the SNameComboBox
-                .OnSelectionChanged(this, &SNestedNamesFromConfigPin::OnCategorySelected)    // dito
+                SAssignNew(ConfigComboBox, SNameComboBox)
+                .ContentPadding(FMargin(6.0f, 2.0f))
+                .OptionsSource(&Categories)
+                .InitiallySelectedItem(InitialSelectedCategory) 
+                .OnComboBoxOpening(this, &SNestedNamesFromConfigPin::OnCategoryComboBoxOpening)
+                .OnSelectionChanged(this, &SNestedNamesFromConfigPin::OnCategorySelected)
             ]
             +SVerticalBox::Slot().AutoHeight()
             [
@@ -68,7 +68,6 @@ void SNestedNamesFromConfigPin::OnCategorySelected(TSharedPtr<FName> ItemSelecte
 {
     if (ItemSelected.IsValid())
     {
-        UE_LOG(LogTemp, Warning, TEXT("%s: check if not the same as previous value"), ANSI_TO_TCHAR(__FUNCTION__));
         UpdateNames(*ItemSelected);
         SetPropertyWithName(*ItemSelected, *SubNames[0]);
         NameComboBox->SetSelectedItem(SubNames[0]);
@@ -135,12 +134,9 @@ void SNestedNamesFromConfigPin::UpdateNames(const FName& Name)
         for (auto SubName : Cat.Value)
         {
             SubNames.Add(SubName);
-            UE_LOG(LogTemp, Warning, TEXT("Subnames choices: %s"), *SubName->ToString());
         }
         break;
     }
-
-    UE_LOG(LogTemp, Warning, TEXT("Your name choice: %s"), *Name.ToString());
 }
 
 TSharedPtr<FName> SNestedNamesFromConfigPin::GetSelectedName(const bool bIsCategory) const
@@ -171,11 +167,7 @@ void SNestedNamesFromConfigPin::GetPropertyAsName(const bool bIsCategory, FName&
     check(GraphPinObj);
     check(GraphPinObj->PinType.PinSubCategoryObject == FNestedNameAttribute::StaticStruct());
 
-    // As we saw in the SNestedNamesFromConfigPin::SetPropertyWithName()
-    // The value is saved in the format (MyPropertyName="My Value") as a FString.
-    // So we have to retrieve the real value and convert it to a FName
     FString PinString = GraphPinObj->GetDefaultAsString();
-    UE_LOG(LogTemp, Warning, TEXT("GetProperty: %s"), *PinString);
 
     if (PinString.StartsWith(TEXT("(")) && PinString.EndsWith(TEXT(")")))
     {
@@ -184,11 +176,9 @@ void SNestedNamesFromConfigPin::GetPropertyAsName(const bool bIsCategory, FName&
         FString CategoryString;
         FString NameString;
         PinString.Split(TEXT(","), &CategoryString, &NameString);
-        UE_LOG(LogTemp, Warning, TEXT("String cat: %s -- name %s"), *CategoryString, *NameString);
         FString ResultString = bIsCategory ? CategoryString : NameString;
         ResultString.TrimStartAndEnd().Split(TEXT("="), NULL, &PinString);
         PinString = PinString.TrimQuotes();
-        UE_LOG(LogTemp, Warning, TEXT("Val %s"), *PinString);
     }
 
     if (!PinString.IsEmpty())
