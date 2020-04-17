@@ -1,11 +1,13 @@
 #pragma once
 
+#include "Attribute/NestedNameAttribute.h"
+#include "Attribute/SimpleNameAttribute.h"
 #include "EdGraph/EdGraphPin.h"
 #include "EdGraph/EdGraphSchema.h"
 #include "EdGraphSchema_K2.h"
 #include "EdGraphUtilities.h"
 #include "Pin/ListNameFromConfigPin.h"
-#include "Attribute/SimpleNameAttribute.h"
+#include "Pin/NestedNamesFromConfigPin.h"
 #include "SlateBasics.h"
 
 class FCustomPinFactory : public FGraphPanelPinFactory
@@ -20,6 +22,12 @@ class FCustomPinFactory : public FGraphPanelPinFactory
             InPin->PinType.PinSubCategoryObject == FSimpleNameAttribute::StaticStruct())
         {
             return SNew(SListNameFromConfigPin, InPin);    // and return our customized pin widget ;).
+        }
+
+        if (InPin->PinType.PinCategory == K2Schema->PC_Struct &&
+            InPin->PinType.PinSubCategoryObject == FNestedNameAttribute::StaticStruct())
+        {
+            return SNew(SNestedNamesFromConfigPin, InPin);    // and return our customized pin widget ;).
         }
         return nullptr;
     }

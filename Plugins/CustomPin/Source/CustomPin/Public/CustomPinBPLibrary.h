@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Attribute/NestedNameAttribute.h"
 #include "Attribute/SimpleNameAttribute.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 
@@ -19,5 +20,8 @@ public:
      */
     UFUNCTION(BlueprintCallable, meta = (DisplayName = "Test my custom pin", Keywords = "CustomPin test testing"), Category = "CustomPinTesting")
     static FName TestWithListNameFromConfigPin(FSimpleNameAttribute MyAttribute);
+
+    UFUNCTION(BlueprintCallable, meta = (DisplayName = "Test my custom pin with nested value", Keywords = "CustomPin test testing"), Category = "CustomPinTesting")
+    static FString TestWithNestedNameFromConfigPin(FNestedNameAttribute MyAttribute);
     // clang-format on
 };
