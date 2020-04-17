@@ -2,10 +2,10 @@
 
 #include "CoreMinimal.h"
 
-#include "CustomAttribute.generated.h"
+#include "SimpleNameAttribute.generated.h"
 
 USTRUCT(BlueprintType)
-struct FCustomAttribute
+struct FSimpleNameAttribute
 {
     GENERATED_BODY()
 public:

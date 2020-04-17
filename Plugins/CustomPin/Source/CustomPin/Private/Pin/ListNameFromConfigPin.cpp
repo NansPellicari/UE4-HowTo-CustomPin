@@ -1,7 +1,7 @@
-#include "ListNameFromConfigPin.h"
+#include "Pin/ListNameFromConfigPin.h"
 
-#include "CustomAttribute.h"
-#include "CustomConfig.h"
+#include "Attribute/SimpleNameAttribute.h"
+#include "Config/ListNameConfig.h"
 #include "EdGraph/EdGraphPin.h"
 #include "EdGraph/EdGraphSchema.h"
 #include "SNameComboBox.h"
@@ -14,7 +14,7 @@ void SListNameFromConfigPin::Construct(const FArguments& InArgs, UEdGraphPin* In
 
 TSharedRef<SWidget> SListNameFromConfigPin::GetDefaultValueWidget()
 {
-    UCustomConfig::GetNames(AttributesList);
+    UListNameConfig::GetNames(AttributesList);
 
     // retrieve the previous value selected (or the first value as default)
     TSharedPtr<FName> InitialSelectedName = GetSelectedName();
@@ -51,11 +51,11 @@ void SListNameFromConfigPin::OnComboBoxOpening()
 void SListNameFromConfigPin::SetPropertyWithName(const FName& Name)
 {
     check(GraphPinObj);
-    check(GraphPinObj->PinType.PinSubCategoryObject == FCustomAttribute::StaticStruct());
+    check(GraphPinObj->PinType.PinSubCategoryObject == FSimpleNameAttribute::StaticStruct());
 
     // To set the property we need to use a FString
     // using this format: (MyPropertyName="My Value")
-    // MyPropertyName is the property defined in our struct FCustomAttribute
+    // MyPropertyName is the property defined in our struct FSimpleNameAttribute
     FString PinString = TEXT("(MyName=\"");
     PinString += *Name.ToString();
     PinString += TEXT("\")");
@@ -105,7 +105,7 @@ TSharedPtr<FName> SListNameFromConfigPin::GetSelectedName() const
 void SListNameFromConfigPin::GetPropertyAsName(FName& OutName) const
 {
     check(GraphPinObj);
-    check(GraphPinObj->PinType.PinSubCategoryObject == FCustomAttribute::StaticStruct());
+    check(GraphPinObj->PinType.PinSubCategoryObject == FSimpleNameAttribute::StaticStruct());
 
     // As we saw in the SListNameFromConfigPin::SetPropertyWithName()
     // The value is saved in the format (MyPropertyName="My Value") as a FString.

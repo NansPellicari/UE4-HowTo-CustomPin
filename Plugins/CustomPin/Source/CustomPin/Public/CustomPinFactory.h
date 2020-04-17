@@ -1,11 +1,11 @@
 #pragma once
 
-#include "CustomAttribute.h"
 #include "EdGraph/EdGraphPin.h"
 #include "EdGraph/EdGraphSchema.h"
 #include "EdGraphSchema_K2.h"
 #include "EdGraphUtilities.h"
-#include "ListNameFromConfigPin.h"
+#include "Pin/ListNameFromConfigPin.h"
+#include "Attribute/SimpleNameAttribute.h"
 #include "SlateBasics.h"
 
 class FCustomPinFactory : public FGraphPanelPinFactory
@@ -17,7 +17,7 @@ class FCustomPinFactory : public FGraphPanelPinFactory
          * Check if pin is struct, and then check if that pin is of struct type we want to customize
          */
         if (InPin->PinType.PinCategory == K2Schema->PC_Struct &&
-            InPin->PinType.PinSubCategoryObject == FCustomAttribute::StaticStruct())
+            InPin->PinType.PinSubCategoryObject == FSimpleNameAttribute::StaticStruct())
         {
             return SNew(SListNameFromConfigPin, InPin);    // and return our customized pin widget ;).
         }

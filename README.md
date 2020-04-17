@@ -171,10 +171,10 @@ A quick preview of each classes:
 | -- | -- | -- |
 | `FCustomPinModule` | CustomPin[.h](./Plugins/CustomPin/Source/CustomPin/Public/CustomPin.h)/[.cpp](./Plugins/CustomPin/Source/CustomPin/Private/CustomPin.cpp) | Is the "bringer of life" of this project, when it starts it uses the factory to add our visual pin to the Editor Graph. |
 | `FCustomPinFactory` | CustomPinFactory[.h](./Plugins/CustomPin/Source/CustomPin/Public/CustomPinFactory.h) | It checks for a given pin if it's associated to our Custom Attribute. |
-| `FCustomAttribute` | CustomAttribute[.h](./Plugins/CustomPin/Source/CustomPin/Public/CustomAttribute.h) | This is a simple struct we want our pin will be associated to. |
-| `UCustomConfig` | CustomConfig[.h](./Plugins/CustomPin/Source/CustomPin/Public/CustomConfig.h) | Thank to this we can't create a simple `project settings` menu and data. |
+| `FSimpleNameAttribute` | SimpleNameAttribute[.h](./Plugins/CustomPin/Source/CustomPin/Public/Attribute/SimpleNameAttribute.h) | This is a simple struct we want our pin will be associated to. |
+| `UListNameConfig` | ListNameConfig[.h](./Plugins/CustomPin/Source/CustomPin/Public/Config/ListNameConfig.h) | Thank to this we can't create a simple `project settings` menu and data. |
 | `UCustomPinBPLibrary` | CustomPinBPLibrary[.h](./Plugins/CustomPin/Source/CustomPin/Public/CustomPinBPLibrary.h)/[.cpp](./Plugins/CustomPin/Source/CustomPin/Private/CustomPinBPLibrary.cpp) | This will create a simple functionnal node which use our CustomAttribute as function's parameter. |
-| `SListNameFromConfigPin` | ListNameFromConfigPin[.h](./Plugins/CustomPin/Source/CustomPin/Public/ListNameFromConfigPin.h)/[.cpp](./Plugins/CustomPin/Source/CustomPin/Private/ListNameFromConfigPin.cpp) | This is the pin object, it embeds all the behavior, user events, retrieving associated data and UI build. |
+| `SListNameFromConfigPin` | ListNameFromConfigPin[.h](./Plugins/CustomPin/Source/CustomPin/Public/Pin/ListNameFromConfigPin.h)/[.cpp](./Plugins/CustomPin/Source/CustomPin/Private/ListNameFromConfigPin.cpp) | This is the pin object, it embeds all the behavior, user events, retrieving associated data and UI build. |
 
 
 <a id="title4"></a>

@@ -2,7 +2,7 @@
 
 #include "CustomPin.h"
 
-FName UCustomPinBPLibrary::TestWithListNameFromConfigPin(FCustomAttribute MyAttribute)
+FName UCustomPinBPLibrary::TestWithListNameFromConfigPin(FSimpleNameAttribute MyAttribute)
 {
     // Do what you want here
     UE_LOG(LogTemp, Warning, TEXT("You chosen attribute: %s"), *MyAttribute.MyName.ToString());
