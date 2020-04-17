@@ -18,3 +18,16 @@ FString UCustomPinBPLibrary::TestWithNestedNameFromConfigPin(FNestedNameAttribut
     Output.Append(TEXT(",")).Append(MyAttribute.MySubName.ToString());
     return Output;
 }
+
+FString UCustomPinBPLibrary::TestWithNestedNamesFromConfigPin(FMultiNestedNamesAttribute MyAttribute)
+{
+    // Do what you want here
+    FString Output = MyAttribute.MyName.ToString();
+    UE_LOG(LogTemp, Warning, TEXT("You chosen name: %s"), *MyAttribute.MyName.ToString());
+    for (FName Name : MyAttribute.MySubNames)
+    {
+        Output.Append(TEXT(",")).Append(Name.ToString());
+        UE_LOG(LogTemp, Warning, TEXT("You chosen subname: %s"), *Name.ToString());
+    }
+    return Output;
+}

@@ -2,6 +2,7 @@
 
 #include "Attribute/NestedNameAttribute.h"
 #include "Attribute/SimpleNameAttribute.h"
+#include "Attribute/MultiNestedNamesAttribute.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 
 #include "CustomPinBPLibrary.generated.h"
@@ -23,5 +24,8 @@ public:
 
     UFUNCTION(BlueprintCallable, meta = (DisplayName = "Test my custom pin with nested value", Keywords = "CustomPin test testing"), Category = "CustomPinTesting")
     static FString TestWithNestedNameFromConfigPin(FNestedNameAttribute MyAttribute);
+    
+    UFUNCTION(BlueprintCallable, meta = (DisplayName = "Test my custom pin with multi nested value", Keywords = "CustomPin test testing"), Category = "CustomPinTesting")
+    static FString TestWithNestedNamesFromConfigPin(FMultiNestedNamesAttribute MyAttribute);
     // clang-format on
 };

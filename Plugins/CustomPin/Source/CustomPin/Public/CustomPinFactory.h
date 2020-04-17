@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Attribute/MultiNestedNamesAttribute.h"
 #include "Attribute/NestedNameAttribute.h"
 #include "Attribute/SimpleNameAttribute.h"
 #include "EdGraph/EdGraphPin.h"
@@ -7,6 +8,7 @@
 #include "EdGraphSchema_K2.h"
 #include "EdGraphUtilities.h"
 #include "Pin/ListNameFromConfigPin.h"
+#include "Pin/MultiNestedNamesFromConfigPin.h"
 #include "Pin/NestedNamesFromConfigPin.h"
 #include "SlateBasics.h"
 
@@ -28,6 +30,11 @@ class FCustomPinFactory : public FGraphPanelPinFactory
             InPin->PinType.PinSubCategoryObject == FNestedNameAttribute::StaticStruct())
         {
             return SNew(SNestedNamesFromConfigPin, InPin);    // and return our customized pin widget ;).
+        }
+        if (InPin->PinType.PinCategory == K2Schema->PC_Struct &&
+            InPin->PinType.PinSubCategoryObject == FMultiNestedNamesAttribute::StaticStruct())
+        {
+            return SNew(SMultiNestedNamesFromConfigPin, InPin);    // and return our customized pin widget ;).
         }
         return nullptr;
     }
