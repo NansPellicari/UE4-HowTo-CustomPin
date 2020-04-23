@@ -27,257 +27,257 @@
 
 void SMultiNestedNamesFromConfigPin::Construct(const FArguments& InArgs, UEdGraphPin* InGraphPinObj)
 {
-    SGraphPin::Construct(SGraphPin::FArguments(), InGraphPinObj);
+	SGraphPin::Construct(SGraphPin::FArguments(), InGraphPinObj);
 }
 
 TSharedRef<SWidget> SMultiNestedNamesFromConfigPin::GetDefaultValueWidget()
 {
-    UNestedNamesConfig::GetNames(AttributesList);
-    for (auto Cat : AttributesList)
-    {
-        Categories.Add(Cat.Key);
-    }
+	UNestedNamesConfig::GetNames(AttributesList);
+	for (auto Cat : AttributesList)
+	{
+		Categories.Add(Cat.Key);
+	}
 
-    TSharedPtr<FName> InitialSelectedName;
-    // retrieve previous values selected (or the first value as default)
-    TSharedPtr<FName> InitialSelectedCategory = GetSelectedCategory();
-    if (InitialSelectedCategory.IsValid())
-    {
-        UpdateNames(*InitialSelectedCategory.Get());
-        RetrievePropertyAsNames();
-        SetPropertyWithName(*InitialSelectedCategory.Get());
-    }
+	TSharedPtr<FName> InitialSelectedName;
+	// retrieve previous values selected (or the first value as default)
+	TSharedPtr<FName> InitialSelectedCategory = GetSelectedCategory();
+	if (InitialSelectedCategory.IsValid())
+	{
+		UpdateNames(*InitialSelectedCategory.Get());
+		RetrievePropertyAsNames();
+		SetPropertyWithName(*InitialSelectedCategory.Get());
+	}
 
-    // clang-format off
-    SAssignNew(ParentWidget, SVerticalBox)
-        +SVerticalBox::Slot()
-        .AutoHeight()
-        [
-            SAssignNew(ConfigComboBox, SNameComboBox)
-            .ContentPadding(FMargin(6.0f, 2.0f))
-            .OptionsSource(&Categories)
-            .InitiallySelectedItem(InitialSelectedCategory)
-            .OnComboBoxOpening(this, &SMultiNestedNamesFromConfigPin::OnCategoryComboBoxOpening)
-            .OnSelectionChanged(this, &SMultiNestedNamesFromConfigPin::OnCategorySelected)
-        ]
-        +SVerticalBox::Slot().AutoHeight()
-        [
-            SNew(STextBlock) .Margin(FMargin(6.0f, 2.0f)) .Text( LOCTEXT("SubNamesLabel", "Sub names:") )
-        ]
-        +SVerticalBox::Slot().AutoHeight()
-        [
-            SAssignNew(CheckboxWidget, SVerticalBox)
-        ]
-        ;
-    BuildCheckbox();
-    // clang-format on
-    return ParentWidget.ToSharedRef();
+	// clang-format off
+	SAssignNew(ParentWidget, SVerticalBox)
+		+SVerticalBox::Slot()
+		.AutoHeight()
+		[
+			SAssignNew(ConfigComboBox, SNameComboBox)
+			.ContentPadding(FMargin(6.0f, 2.0f))
+			.OptionsSource(&Categories)
+			.InitiallySelectedItem(InitialSelectedCategory)
+			.OnComboBoxOpening(this, &SMultiNestedNamesFromConfigPin::OnCategoryComboBoxOpening)
+			.OnSelectionChanged(this, &SMultiNestedNamesFromConfigPin::OnCategorySelected)
+		]
+		+SVerticalBox::Slot().AutoHeight()
+		[
+			SNew(STextBlock) .Margin(FMargin(6.0f, 2.0f)) .Text( LOCTEXT("SubNamesLabel", "Sub names:") )
+		]
+		+SVerticalBox::Slot().AutoHeight()
+		[
+			SAssignNew(CheckboxWidget, SVerticalBox)
+		]
+		;
+	BuildCheckbox();
+	// clang-format on
+	return ParentWidget.ToSharedRef();
 }
 void SMultiNestedNamesFromConfigPin::BuildCheckbox()
 {
-    CheckboxWidget->ClearChildren();
-    Checkboxes.Empty();
-    if (SubNames.Num() <= 0) return;
-    for (auto Name : SubNames)
-    {
-        FString StrName = Name->ToString();
-        bool bIsChecked = false;
-        for (auto ChoosenName : ChoosenNames)
-        {
-            if (StrName != ChoosenName->ToString()) continue;
-            bIsChecked = true;
-        }
+	CheckboxWidget->ClearChildren();
+	Checkboxes.Empty();
+	if (SubNames.Num() <= 0) return;
+	for (auto Name : SubNames)
+	{
+		FString StrName = Name->ToString();
+		bool bIsChecked = false;
+		for (auto ChoosenName : ChoosenNames)
+		{
+			if (StrName != ChoosenName->ToString()) continue;
+			bIsChecked = true;
+		}
 
-        TPair<TSharedPtr<SCheckBox>, TSharedPtr<STextBlock>> Checkbox;
-        // clang-format off
-        CheckboxWidget->AddSlot()
-        .AutoHeight()
-        [
-            SAssignNew(Checkbox.Key, SCheckBox)
-            .IsChecked(bIsChecked ? ECheckBoxState::Checked : ECheckBoxState::Unchecked)
-            .OnCheckStateChanged(this, &SMultiNestedNamesFromConfigPin::OnCheckboxChanged)
-            [
-                SAssignNew(Checkbox.Value, STextBlock).Text(FText::FromName(*Name))
-            ]
-        ];
-        // clang-format on
-        Checkboxes.Add(Checkbox);
-    }
+		TPair<TSharedPtr<SCheckBox>, TSharedPtr<STextBlock>> Checkbox;
+		// clang-format off
+		CheckboxWidget->AddSlot()
+		.AutoHeight()
+		[
+			SAssignNew(Checkbox.Key, SCheckBox)
+			.IsChecked(bIsChecked ? ECheckBoxState::Checked : ECheckBoxState::Unchecked)
+			.OnCheckStateChanged(this, &SMultiNestedNamesFromConfigPin::OnCheckboxChanged)
+			[
+				SAssignNew(Checkbox.Value, STextBlock).Text(FText::FromName(*Name))
+			]
+		];
+		// clang-format on
+		Checkboxes.Add(Checkbox);
+	}
 }
 
 void SMultiNestedNamesFromConfigPin::OnCheckboxChanged(ECheckBoxState State)
 {
-    ChoosenNames.Empty();
+	ChoosenNames.Empty();
 
-    // Check each checkboxes to see and if checks,
-    // saved it in ChoosenNames.
-    for (auto Pair : Checkboxes)
-    {
-        TSharedPtr<SCheckBox> Checkbox = Pair.Key;
-        TSharedPtr<STextBlock> Text = Pair.Value;
-        if (Checkbox == nullptr || !Checkbox->IsChecked()) continue;
+	// Check each checkboxes to see and if checks,
+	// saved it in ChoosenNames.
+	for (auto Pair : Checkboxes)
+	{
+		TSharedPtr<SCheckBox> Checkbox = Pair.Key;
+		TSharedPtr<STextBlock> Text = Pair.Value;
+		if (Checkbox == nullptr || !Checkbox->IsChecked()) continue;
 
-        FString StrName = Text->GetText().ToString();
-        for (auto SubName : SubNames)
-        {
-            if (StrName != SubName->ToString()) continue;
+		FString StrName = Text->GetText().ToString();
+		for (auto SubName : SubNames)
+		{
+			if (StrName != SubName->ToString()) continue;
 
-            ChoosenNames.Add(SubName);
-            UE_LOG(LogTemp, Warning, TEXT("Check %i %s"), Checkbox->IsChecked(), *Text->GetText().ToString());
-            break;
-        }
-    }
-    UE_LOG(LogTemp, Warning, TEXT("Cat selected: %s"), *ConfigComboBox->GetSelectedItem()->ToString());
-    // Save new data
-    SetPropertyWithName(*ConfigComboBox->GetSelectedItem().Get());
+			ChoosenNames.Add(SubName);
+			UE_LOG(LogTemp, Warning, TEXT("Check %i %s"), Checkbox->IsChecked(), *Text->GetText().ToString());
+			break;
+		}
+	}
+	UE_LOG(LogTemp, Warning, TEXT("Cat selected: %s"), *ConfigComboBox->GetSelectedItem()->ToString());
+	// Save new data
+	SetPropertyWithName(*ConfigComboBox->GetSelectedItem().Get());
 }
 void SMultiNestedNamesFromConfigPin::OnCategorySelected(TSharedPtr<FName> ItemSelected, ESelectInfo::Type SelectInfo)
 {
-    if (ItemSelected.IsValid())
-    {
-        // Checkboxes are fully rebuilt when a category changed
-        ChoosenNames.Empty();
-        UpdateNames(*ItemSelected);
-        RetrievePropertyAsNames();
-        BuildCheckbox();
-        SetPropertyWithName(*ItemSelected);
-    }
+	if (ItemSelected.IsValid())
+	{
+		// Checkboxes are fully rebuilt when a category changed
+		ChoosenNames.Empty();
+		UpdateNames(*ItemSelected);
+		RetrievePropertyAsNames();
+		BuildCheckbox();
+		SetPropertyWithName(*ItemSelected);
+	}
 }
 
 void SMultiNestedNamesFromConfigPin::OnCategoryComboBoxOpening()
 {
-    TSharedPtr<FName> SelectedName = GetSelectedCategory();
-    if (SelectedName.IsValid())
-    {
-        check(ConfigComboBox.IsValid());
-        UpdateNames(*SelectedName);
-        RetrievePropertyAsNames();
-        ConfigComboBox->SetSelectedItem(SelectedName);
-    }
+	TSharedPtr<FName> SelectedName = GetSelectedCategory();
+	if (SelectedName.IsValid())
+	{
+		check(ConfigComboBox.IsValid());
+		UpdateNames(*SelectedName);
+		RetrievePropertyAsNames();
+		ConfigComboBox->SetSelectedItem(SelectedName);
+	}
 }
 
 void SMultiNestedNamesFromConfigPin::SetPropertyWithName(const FName& Category)
 {
-    check(GraphPinObj);
-    check(GraphPinObj->PinType.PinSubCategoryObject == FMultiNestedNamesAttribute::StaticStruct());
-    FString NamesValue;
+	check(GraphPinObj);
+	check(GraphPinObj->PinType.PinSubCategoryObject == FMultiNestedNamesAttribute::StaticStruct());
+	FString NamesValue;
 
-    // Build understandable values for OurStruct > TArray blueprint property
-    for (auto Name : ChoosenNames)
-    {
-        NamesValue.Append("\"").Append(Name->ToString()).Append("\",");
-    }
-    // To remove the last comma
-    NamesValue = NamesValue.LeftChop(1);
-    // This format allows to save TArray values: MySubNames=("value1","value2")
-    FString PinString = FString::Format(TEXT("(MyName=\"{0}\",MySubNames=({1}))"), {Category.ToString(), NamesValue});
-    FString CurrentDefaultValue = GraphPinObj->GetDefaultAsString();
+	// Build understandable values for OurStruct > TArray blueprint property
+	for (auto Name : ChoosenNames)
+	{
+		NamesValue.Append("\"").Append(Name->ToString()).Append("\",");
+	}
+	// To remove the last comma
+	NamesValue = NamesValue.LeftChop(1);
+	// This format allows to save TArray values: MySubNames=("value1","value2")
+	FString PinString = FString::Format(TEXT("(MyName=\"{0}\",MySubNames=({1}))"), {Category.ToString(), NamesValue});
+	FString CurrentDefaultValue = GraphPinObj->GetDefaultAsString();
 
-    if (CurrentDefaultValue != PinString)
-    {
-        const FScopedTransaction Transaction(
-            NSLOCTEXT("GraphEditor", "ChangeMultiNestedNamesFromConfigPinValue", "Change Multi Nested Names From Config Value"));
-        GraphPinObj->Modify();
+	if (CurrentDefaultValue != PinString)
+	{
+		const FScopedTransaction Transaction(
+			NSLOCTEXT("GraphEditor", "ChangeMultiNestedNamesFromConfigPinValue", "Change Multi Nested Names From Config Value"));
+		GraphPinObj->Modify();
 
-        UE_LOG(LogTemp, Warning, TEXT("Verify values old: \"%s\" chosen: \"%s\""), *CurrentDefaultValue, *PinString);
+		UE_LOG(LogTemp, Warning, TEXT("Verify values old: \"%s\" chosen: \"%s\""), *CurrentDefaultValue, *PinString);
 
-        if (PinString != GraphPinObj->GetDefaultAsString())
-        {
-            GraphPinObj->GetSchema()->TrySetDefaultValue(*GraphPinObj, PinString);
-        }
-    }
+		if (PinString != GraphPinObj->GetDefaultAsString())
+		{
+			GraphPinObj->GetSchema()->TrySetDefaultValue(*GraphPinObj, PinString);
+		}
+	}
 }
 
 void SMultiNestedNamesFromConfigPin::UpdateNames(const FName& Name)
 {
-    SubNames.Empty();
-    for (auto Cat : AttributesList)
-    {
-        if (Name.ToString() != Cat.Key->ToString()) continue;
-        for (auto SubName : Cat.Value)
-        {
-            SubNames.Add(SubName);
-            UE_LOG(LogTemp, Warning, TEXT("Subnames choices: %s"), *SubName->ToString());
-        }
-        break;
-    }
+	SubNames.Empty();
+	for (auto Cat : AttributesList)
+	{
+		if (Name.ToString() != Cat.Key->ToString()) continue;
+		for (auto SubName : Cat.Value)
+		{
+			SubNames.Add(SubName);
+			UE_LOG(LogTemp, Warning, TEXT("Subnames choices: %s"), *SubName->ToString());
+		}
+		break;
+	}
 
-    UE_LOG(LogTemp, Warning, TEXT("Your name choice: %s"), *Name.ToString());
+	UE_LOG(LogTemp, Warning, TEXT("Your name choice: %s"), *Name.ToString());
 }
 
 TSharedPtr<FName> SMultiNestedNamesFromConfigPin::GetSelectedCategory() const
 {
-    TArray<TSharedPtr<FName>> Names = Categories;
-    int32 NameCount = Names.Num();
-    if (NameCount <= 0)
-    {
-        return NULL;
-    }
+	TArray<TSharedPtr<FName>> Names = Categories;
+	int32 NameCount = Names.Num();
+	if (NameCount <= 0)
+	{
+		return NULL;
+	}
 
-    FName Name;
-    GetPropertyAsCategory(Name);
+	FName Name;
+	GetPropertyAsCategory(Name);
 
-    for (int32 NameIndex = 0; NameIndex < NameCount; ++NameIndex)
-    {
-        if (Name == *Names[NameIndex].Get())
-        {
-            return Names[NameIndex];
-        }
-    }
-    // no value has been found, return a default value
-    return Names[0];
+	for (int32 NameIndex = 0; NameIndex < NameCount; ++NameIndex)
+	{
+		if (Name == *Names[NameIndex].Get())
+		{
+			return Names[NameIndex];
+		}
+	}
+	// no value has been found, return a default value
+	return Names[0];
 }
 
 void SMultiNestedNamesFromConfigPin::GetPropertyAsCategory(FName& OutName) const
 {
-    check(GraphPinObj);
-    check(GraphPinObj->PinType.PinSubCategoryObject == FMultiNestedNamesAttribute::StaticStruct());
+	check(GraphPinObj);
+	check(GraphPinObj->PinType.PinSubCategoryObject == FMultiNestedNamesAttribute::StaticStruct());
 
-    FString PinString = GraphPinObj->GetDefaultAsString();
+	FString PinString = GraphPinObj->GetDefaultAsString();
 
-    if (PinString.StartsWith(TEXT("(")) && PinString.EndsWith(TEXT(")")))
-    {
-        PinString = PinString.LeftChop(1);
-        PinString = PinString.RightChop(1);
-        FString ResultString;
-        PinString.Split(TEXT(","), &ResultString, NULL);
-        ResultString.TrimStartAndEnd().Split(TEXT("="), NULL, &PinString);
-        PinString = PinString.TrimQuotes();
-    }
+	if (PinString.StartsWith(TEXT("(")) && PinString.EndsWith(TEXT(")")))
+	{
+		PinString = PinString.LeftChop(1);
+		PinString = PinString.RightChop(1);
+		FString ResultString;
+		PinString.Split(TEXT(","), &ResultString, NULL);
+		ResultString.TrimStartAndEnd().Split(TEXT("="), NULL, &PinString);
+		PinString = PinString.TrimQuotes();
+	}
 
-    if (!PinString.IsEmpty())
-    {
-        OutName = *PinString;
-    }
+	if (!PinString.IsEmpty())
+	{
+		OutName = *PinString;
+	}
 }
 
 void SMultiNestedNamesFromConfigPin::RetrievePropertyAsNames()
 {
-    check(GraphPinObj);
-    check(GraphPinObj->PinType.PinSubCategoryObject == FMultiNestedNamesAttribute::StaticStruct());
+	check(GraphPinObj);
+	check(GraphPinObj->PinType.PinSubCategoryObject == FMultiNestedNamesAttribute::StaticStruct());
 
-    FString PinString = GraphPinObj->GetDefaultAsString();
+	FString PinString = GraphPinObj->GetDefaultAsString();
 
-    if (PinString.StartsWith(TEXT("(")) && PinString.EndsWith(TEXT(")")))
-    {
-        PinString = PinString.LeftChop(1);
-        PinString = PinString.RightChop(1);
-        FString ResultString;
-        // This retrieves the 'MySubnames="..." ' property in saved string
-        PinString.Split(TEXT("\","), NULL, &ResultString);
-        ResultString.TrimStartAndEnd().Split(TEXT("="), NULL, &PinString);
-        PinString = PinString.TrimQuotes();
-        PinString = PinString.LeftChop(1);
-        PinString = PinString.RightChop(1);
+	if (PinString.StartsWith(TEXT("(")) && PinString.EndsWith(TEXT(")")))
+	{
+		PinString = PinString.LeftChop(1);
+		PinString = PinString.RightChop(1);
+		FString ResultString;
+		// This retrieves the 'MySubnames="..." ' property in saved string
+		PinString.Split(TEXT("\","), NULL, &ResultString);
+		ResultString.TrimStartAndEnd().Split(TEXT("="), NULL, &PinString);
+		PinString = PinString.TrimQuotes();
+		PinString = PinString.LeftChop(1);
+		PinString = PinString.RightChop(1);
 
-        // Check each subnames in the ResultString
-        while (PinString.Split(TEXT(","), &ResultString, &PinString))
-        {
-            ChoosenNames.Add(MakeShareable<FName>(new FName(*ResultString.TrimQuotes())));
-        }
+		// Check each subnames in the ResultString
+		while (PinString.Split(TEXT(","), &ResultString, &PinString))
+		{
+			ChoosenNames.Add(MakeShareable<FName>(new FName(*ResultString.TrimQuotes())));
+		}
 
-        ChoosenNames.Add(MakeShareable<FName>(new FName(*PinString.TrimQuotes())));
-    }
+		ChoosenNames.Add(MakeShareable<FName>(new FName(*PinString.TrimQuotes())));
+	}
 }
 
 #undef LOCTEXT_NAMESPACE

@@ -28,23 +28,23 @@ class SNameComboBox;
 class SListNameFromConfigPin : public SGraphPin
 {
 public:
-    SLATE_BEGIN_ARGS(SListNameFromConfigPin) {}
-    SLATE_END_ARGS()
+	SLATE_BEGIN_ARGS(SListNameFromConfigPin) {}
+	SLATE_END_ARGS()
 public:
-    void Construct(const FArguments& InArgs, UEdGraphPin* InGraphPinObj);
+	void Construct(const FArguments& InArgs, UEdGraphPin* InGraphPinObj);
 
 protected:
-    // this override is used to display slate widget used for customization.
-    virtual TSharedRef<SWidget> GetDefaultValueWidget() override;
-    void OnAttributeSelected(TSharedPtr<FName> ItemSelected, ESelectInfo::Type SelectInfo);
-    void OnComboBoxOpening();
+	// this override is used to display slate widget used for customization.
+	virtual TSharedRef<SWidget> GetDefaultValueWidget() override;
+	void OnAttributeSelected(TSharedPtr<FName> ItemSelected, ESelectInfo::Type SelectInfo);
+	void OnComboBoxOpening();
 
-    TSharedPtr<FName> GetSelectedName() const;
+	TSharedPtr<FName> GetSelectedName() const;
 
-    void SetPropertyWithName(const FName& Name);
-    void GetPropertyAsName(FName& OutName) const;
+	void SetPropertyWithName(const FName& Name);
+	void GetPropertyAsName(FName& OutName) const;
 
 private:
-    TArray<TSharedPtr<FName>> AttributesList;
-    TSharedPtr<SNameComboBox> NameComboBox;
+	TArray<TSharedPtr<FName>> AttributesList;
+	TSharedPtr<SNameComboBox> NameComboBox;
 };

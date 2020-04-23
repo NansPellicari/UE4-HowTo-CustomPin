@@ -20,10 +20,10 @@
 
 void FCustomPinModule::StartupModule()
 {
-    // create your factory and shared pointer to it.
-    TSharedPtr<FCustomPinFactory> Factory = MakeShareable(new FCustomPinFactory());
-    // and now register it.
-    FEdGraphUtilities::RegisterVisualPinFactory(Factory);
+	// create your factory and shared pointer to it.
+	TSharedPtr<FCustomPinFactory> Factory = MakeShareable(new FCustomPinFactory());
+	// and now register it.
+	FEdGraphUtilities::RegisterVisualPinFactory(Factory);
 }
 
 void FCustomPinModule::ShutdownModule() {}

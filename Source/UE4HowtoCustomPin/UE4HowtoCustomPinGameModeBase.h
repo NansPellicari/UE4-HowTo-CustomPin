@@ -13,5 +13,5 @@
 UCLASS()
 class UE4HOWTOCUSTOMPIN_API AUE4HowtoCustomPinGameModeBase : public AGameModeBase
 {
-    GENERATED_BODY()
+	GENERATED_BODY()
 };

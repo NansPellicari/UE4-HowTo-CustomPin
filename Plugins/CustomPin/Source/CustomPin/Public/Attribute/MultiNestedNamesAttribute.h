@@ -21,12 +21,12 @@
 USTRUCT(BlueprintType)
 struct FMultiNestedNamesAttribute
 {
-    GENERATED_BODY()
+	GENERATED_BODY()
 public:
-    // It's important to mark property as UPROPERTY(), it doesn't need to have any specifiers though.
-    UPROPERTY(BlueprintReadOnly)
-    FName MyName;
+	// It's important to mark property as UPROPERTY(), it doesn't need to have any specifiers though.
+	UPROPERTY(BlueprintReadOnly)
+	FName MyName;
 
-    UPROPERTY(BlueprintReadOnly)
-    TArray<FName> MySubNames;
+	UPROPERTY(BlueprintReadOnly)
+	TArray<FName> MySubNames;
 };
