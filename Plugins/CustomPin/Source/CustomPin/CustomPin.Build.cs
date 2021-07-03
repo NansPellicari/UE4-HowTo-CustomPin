@@ -34,7 +34,8 @@ public class CustomPin : ModuleRules
 				"Slate",
 				"EditorStyle",
 				"Kismet",
-				"KismetCompiler"
+				"KismetCompiler",
+				"DeveloperSettings"
 			}
 			);
 	}
